@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WebhookVerification {
 
-	@GetMapping("/webhooks/verification")
+	@GetMapping("/callback/webhooks")
 	public ResponseEntity<?> registeringCallbackUrlForSubscription(@RequestParam(value = "hub.mode") String mode,
 			@RequestParam(value = "hub.verify_token") String verify_token,
 			@RequestParam(value = "hub.challenge") String challenge) {
