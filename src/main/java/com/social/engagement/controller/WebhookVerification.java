@@ -3,11 +3,10 @@ package com.social.engagement.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +42,7 @@ public class WebhookVerification {
 		log.info(" Event response : {}", pushedJsonAsString);
 		log.info("------Data : {}", data);
 
-		JSONArray entries = (JSONArray) new JSONParser().parse(pushedJsonAsString);
+		JSONObject entries = (JSONObject) new JSONParser().parse(pushedJsonAsString);
 		log.info("------Event Response to be sent to datalake. : {}", entries);
 
 	}
