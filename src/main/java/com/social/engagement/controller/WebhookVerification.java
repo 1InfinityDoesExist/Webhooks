@@ -38,14 +38,13 @@ public class WebhookVerification {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/callback/webhooks", method = RequestMethod.POST)
-	public ResponseEntity<?> facebookDataStreamPage(HttpServletRequest request, String data) throws Exception {
+	public void facebookDataStreamPage(HttpServletRequest request, String data) throws Exception {
 		String pushedJsonAsString = IOUtils.toString(request.getInputStream(), "utf-8");
 		log.info(" Event response : {}", pushedJsonAsString);
 		log.info("------Data : {}", data);
 
 		JSONArray entries = (JSONArray) new JSONParser().parse(pushedJsonAsString);
-		return ResponseEntity.status(HttpStatus.OK).body(
-				new ModelMap().addAttribute("pushedJsonAsString", pushedJsonAsString).addAttribute("entries", entries));
+		log.info("------Event Response to be sent to datalake. : {}", entries);
 
 	}
 }
