@@ -43,9 +43,9 @@ public class WebhookVerification {
 		log.info(" Event response : {}", pushedJsonAsString);
 		log.info("------Data : {}", data);
 
-		JSONArray entries = (JSONArray) new JSONParser().parse(data);
-		return ResponseEntity.status(HttpStatus.OK).body(new ModelMap()
-				.addAttribute("pushedJsonAsString", pushedJsonAsString).addAttribute("entries", entries));
-				
+		JSONArray entries = (JSONArray) new JSONParser().parse(pushedJsonAsString);
+		return ResponseEntity.status(HttpStatus.OK).body(
+				new ModelMap().addAttribute("pushedJsonAsString", pushedJsonAsString).addAttribute("entries", entries));
+
 	}
 }
