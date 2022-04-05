@@ -25,14 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class WebhookVerification {
 
-	private final String TWITTER_CONSUMER_SECRET = "xaaQw3Gg15eZQjgbTY0B2gTrCg2e7Pcx9YxoJTsbGHtubGZhOv";
+	private final String TWITTER_CONSUMER_SECRET = "gAUztDbnOxh3ewCZdVSiUqpH8tPFcWHvywfpzBtJUVelSPEptE";
 
 	@GetMapping("/twitter/callback/webhooks")
 	public ResponseEntity<?> crcTwitter(@RequestParam(value = "crc_token") String crcToken) {
 
 		String hash = null;
 
-		log.info("----CRC Token from Twitter : {}", crcToken);
+		log.info("----CRC Token from Twitter : {} and consumer_secret_key : {}", crcToken, TWITTER_CONSUMER_SECRET);
 		try {
 			Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
 			SecretKeySpec secret_key = new SecretKeySpec(TWITTER_CONSUMER_SECRET.getBytes(), "HmacSHA256");
