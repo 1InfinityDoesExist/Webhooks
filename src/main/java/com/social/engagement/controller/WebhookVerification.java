@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +47,16 @@ public class WebhookVerification {
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ModelMap().addAttribute("response_token", "sha256=" + hash));
+	}
+
+	@PostMapping("/twitter/callback/webhooks")
+	public void eventHandler(HttpServletRequest request, String data) throws Exception {
+		String pushedJsonAsString = IOUtils.toString(request.getInputStream(), "utf-8");
+		log.info(" Event response : {}", pushedJsonAsString);
+
+		JSONObject entries = (JSONObject) new JSONParser().parse(pushedJsonAsString);
+
+		log.info("------Event Response to be sent to datalake. : {}", entries);
 	}
 
 	@GetMapping("/callback/webhooks")
