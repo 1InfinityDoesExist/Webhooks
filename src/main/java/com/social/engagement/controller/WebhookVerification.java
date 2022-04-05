@@ -44,7 +44,8 @@ public class WebhookVerification {
 			throw new RuntimeException("----Use agaian exception and throw proper error msg.");
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body(new ModelMap().addAttribute("response_token", hash));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ModelMap().addAttribute("response_token", "sha256=" + hash));
 	}
 
 	@GetMapping("/callback/webhooks")
