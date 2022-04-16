@@ -1,8 +1,11 @@
 package com.social.engagement.controller;
 
+import java.io.IOException;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -91,5 +94,19 @@ public class WebhookVerification {
 
 		log.info("------Event Response to be sent to datalake. : {}", entries);
 
+	}
+
+	/**
+	 * Twillio MSG CallBack URL
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/MessageStatus", method = RequestMethod.POST)
+	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String messageSid = request.getParameter("MessageSid");
+		String messageStatus = request.getParameter("MessageStatus");
+		log.info("SID: {}, Status: {}", messageSid, messageStatus);
 	}
 }
