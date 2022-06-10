@@ -117,6 +117,7 @@ public class WebhookVerification {
 	public ResponseEntity<?> getTwitterAuthCodeAndToken(@RequestParam(value = "oauth_token") String oauth_token,
 			@RequestParam(value = "oauth_verifier") String oauth_verifier) throws ServletException, IOException {
 
+		log.info("-----Oauth-Token : {} and oauth_verifier: {}", oauth_token, oauth_verifier);
 		return ResponseEntity.status(HttpStatus.OK).body(
 				new ModelMap().addAttribute("oauth_token", oauth_token).addAttribute("oauth_verifier", oauth_verifier));
 	}
