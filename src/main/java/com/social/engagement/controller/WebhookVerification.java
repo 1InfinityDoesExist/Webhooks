@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.social.engagement.utils.InstagramConstants;
@@ -109,4 +111,14 @@ public class WebhookVerification {
 		String messageStatus = request.getParameter("MessageStatus");
 		log.info("SID: {}, Status: {}", messageSid, messageStatus);
 	}
+
+	@GetMapping(path = "/twitter-callback")
+	@ResponseBody
+	public ResponseEntity<?> getTwitterAuthCodeAndToken(@RequestParam(value = "oauth_token") String oauth_token,
+			@RequestParam(value = "oauth_verifier") String oauth_verifier) throws ServletException, IOException {
+
+		return ResponseEntity.status(HttpStatus.OK).body(
+				new ModelMap().addAttribute("oauth_token", oauth_token).addAttribute("oauth_verifier", oauth_verifier));
+	}
+
 }
