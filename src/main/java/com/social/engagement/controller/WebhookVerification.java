@@ -1,6 +1,10 @@
 package com.social.engagement.controller;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.social.engagement.utils.InstagramConstants;
 
@@ -30,6 +36,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 public class WebhookVerification {
+	
+	private static final String[] HEADERS_TO_TRY = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP",
+			"HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP",
+			"HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
+
 
 	private final String TWITTER_CONSUMER_SECRET = "gAUztDbnOxh3ewCZdVSiUqpH8tPFcWHvywfpzBtJUVelSPEptE";
 
@@ -120,6 +131,79 @@ public class WebhookVerification {
 		log.info("-----Oauth-Token : {} and oauth_verifier: {}", oauth_token, oauth_verifier);
 		return ResponseEntity.status(HttpStatus.OK).body(
 				new ModelMap().addAttribute("oauth_token", oauth_token).addAttribute("oauth_verifier", oauth_verifier));
+	}
+
+	@GetMapping(path = "/oauth-sso")
+	@ResponseBody
+	public ResponseEntity<?> oauthSSO() throws ServletException, IOException {
+		InetAddress addr;
+
+		String hostName = null;
+		try {
+			addr = InetAddress.getLocalHost();
+			// Getting IPAddress of localhost - getHostAddress return IP Address
+			// in textual format
+			String ipAddress = addr.getHostAddress();
+
+			System.out.println("IP address of localhost from Java Program: " + ipAddress);
+
+			// Hostname
+			hostName = addr.getHostName();
+			System.out.println("Name of hostname : " + hostName);
+
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+
+		System.out.println("I am calling from : " + request.getHeader("user-agent"));
+		for (String header : HEADERS_TO_TRY) {
+			String data = request.getHeader(header);
+			System.out.println("header is " + header + "and data is : " + data);
+		}
+
+		byte hostIP[];
+		try {
+			hostIP = InetAddress.getByName(hostName).getAddress();
+			System.out.println(hostIP.toString());
+		} catch (UnknownHostException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+
+		String ipAddress = null;
+		String getWay = request.getHeader("VIA"); // Gateway
+		ipAddress = request.getHeader("X-FORWARDED-FOR"); // proxy
+		if (ipAddress == null) {
+			ipAddress = request.getRemoteAddr();
+		}
+		System.out.println("IP Address: " + ipAddress);
+
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String userIpAddress = httpRequest.getHeader("X-Forwarded-For");
+		System.out.println("-----" + userIpAddress);
+		
+		
+		
+		System.out.println("*******************************************************************************");
+		
+		Enumeration e = NetworkInterface.getNetworkInterfaces();
+		while(e.hasMoreElements())
+		{
+		    NetworkInterface n = (NetworkInterface) e.nextElement();
+		    Enumeration ee = n.getInetAddresses();
+		    while (ee.hasMoreElements())
+		    {
+		        InetAddress i = (InetAddress) ee.nextElement();
+		        System.out.println(ee + "-----" +    i.getHostAddress() + " ----->" + i.getCanonicalHostName());
+		    }
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(
+				new ModelMap().addAttribute("oauth_token", "").addAttribute("oauth_verifier", ""));
 	}
 
 }
